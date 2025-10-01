@@ -26,9 +26,10 @@ void afficherClient(Client c);
 void deposerSolde(Client *c, float montant);
 void afficherProduits(Produit produits[], int n);
 void acheterProduit(Client *c, Produit produits[], int n);
-
 void rechercherProduit(Produit produits[], int n);
 void trierProduits(Produit produits[], int n);
+void consultationStatistiques(Produit produits[], int n);
+
 
 int menuPrincipal();
 int menuCatalogue();
@@ -147,7 +148,30 @@ void trierProduits(Produit produits[], int n) {
         }
     }
     printf("Produits tries avec succes.\n");
+    printf("\nProduits tries avec succes. Voici le nouveau catalogue:\n");
+    afficherProduits(produits, n);
 }
+// ================= statistique =================
+void consultationStatistiques(Produit produits[], int n) {
+    int trouve = 0;
+    printf("\n=== Consultation statistiques personnelles ===\n");
+    printf("Produits encore disponibles (stock > 0):\n\n");
+
+    for (int i = 0; i < n; i++) {
+        if (produits[i].stock > 0) {
+            printf("%d | %s | %s | %.2f MAD | Stock: %d\n  -> %s\n",
+                   produits[i].idProduit, produits[i].nom, produits[i].categorie,
+                   produits[i].prix, produits[i].stock, produits[i].description);
+            trouve = 1;
+        }
+    }
+
+    if (!trouve) {
+        printf("Aucun produit disponible, tout est en rupture de stock.\n");
+    }
+}
+
+
 
 int menuPrincipal() {
     int choix;
@@ -169,7 +193,8 @@ int menuCatalogue() {
     printf("1. Afficher Produits\n");
     printf("2. Rechercher Produit\n");
     printf("3. Trier Produits\n");
-    printf("4. Retour\n");
+    printf("4. Consultation statistiques personnelles\n"); 
+    printf("5. Retour\n");
     printf("Votre choix: ");
     scanf("%d", &choix);
     return choix;
@@ -207,15 +232,19 @@ int main() {
                 scanf("%f", &montant);
                 deposerSolde(&client, montant);
             } else printf("Creez un client d'abord.\n");
-        } else if (choix == 4) {
-            int choixC;
-            do {
-                choixC = menuCatalogue();
-                if (choixC == 1) afficherProduits(produits, nbProduits);
-                else if (choixC == 2) rechercherProduit(produits, nbProduits);
-                else if (choixC == 3) trierProduits(produits, nbProduits);
-            } while (choixC != 4);
-        } else if (choix == 5) {
+
+            } else if (choix == 4) {
+    int choixC;
+    do {
+        choixC = menuCatalogue();
+        if (choixC == 1) afficherProduits(produits, nbProduits);
+        else if (choixC == 2) rechercherProduit(produits, nbProduits);
+        else if (choixC == 3) trierProduits(produits, nbProduits);
+        else if (choixC == 4) consultationStatistiques(produits, nbProduits); 
+    } while (choixC != 5);
+}
+ 
+         else if (choix == 5) {
             if (clientCree) acheterProduit(&client, produits, nbProduits);
             else printf("Creez un client d'abord.\n");
         } else if (choix == 6) {
